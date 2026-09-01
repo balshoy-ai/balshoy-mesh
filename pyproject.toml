@@ -1,0 +1,90 @@
+[project.urls]
+Homepage = "https://balshoy.org/"
+Documentation = "https://github.com/balshoy-ai/balshoy-mesh/blob/main/README.md"
+Repository = "git@github.com:balshoy-ai/balshoy-mesh.git"
+Issues = "https://github.com/balshoy-ai/balshoy-mesh/issues"
+
+[project]
+name = "balshoy-esh"
+description = "Balshoy Mesh is an event-driven framework"
+requires-python = ">=3.12"
+version = "2026"
+license = "MIT"
+dependencies = [
+    "pydantic==2.13.5",
+    "openai==3.6.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff==0.15.15",
+    "pytest==9.0.3",
+    "pytest-asyncio==1.4.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+exclude = [
+]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D100",
+    "D104",
+    "D107",
+    "D203",
+    "D213",
+    "COM812",
+    "ISC001",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "RUF012",
+    "A003",
+    "FA100",
+    "FBT001",
+    "FBT002",
+    "ANN401",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = [
+    "S101",
+    "ARG001",
+    "ARG002",
+    "PLR2004",
+    "SLF001",
+    "ANN",
+    "SIM117",
+    "ERA001",
+    "PYI024",
+    "INP001",
+    "F841",
+    "N802",
+    "ASYNC",
+    "S105",
+    "PT011",
+    "S106",
+    "PLW0603",
+    "UP017",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 7
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pyright]
+typeCheckingMode = "basic"
+reportMissingImports = "none"
+reportMissingModuleSource = "none"
+reportGeneralTypeIssues = "none"

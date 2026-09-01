@@ -1,0 +1,64 @@
+services:
+  mesh:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    restart: unless-stopped
+    container_name: balshoy-mesh
+    environment:
+      - LLM_BASE_URL=http://ollama:11434/v1
+      - LLM_API_KEY=ollama
+    volumes:
+      - .:/opt/balshoy-mesh:cached
+    command: uv run python src/main.py
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /opt/balshoy-mesh
+          ignore:
+            - .venv/
+            - __pycache__/
+            - .git/
+            - .pytest_cache/
+            - .mypy_cache/
+            - .ruff_cache/
+            - logs/
+            - .env
+            - .DS_Store
+
+        - action: rebuild
+          path: ./pyproject.toml
+        
+        - action: rebuild
+          path: ./Dockerfile
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - open-webui_data:/app/backend/data
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+  open-webui_data:
+
+networks:
+  default:
+    name: balshoy-network
