@@ -1,3 +1,5 @@
+from typing import List
+
 from planner import Plan, Step
 from agents import run
 

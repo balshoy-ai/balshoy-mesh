@@ -14,13 +14,13 @@
 
 ## Roadmap
 
-### Phase 0 — Core Backbone ✅
+### ✅ Phase 0 — Core Backbone
 *   **In-memory implementation:** `Planner → Plan(DAG) → Executor → mock-agents`.
 *   Topological sorting and threaded dependency execution proven.
 *   Here, "Executor" is an in-memory task loader; in Phase 3, it becomes the Dispatcher (delivery to NATS).
 *   **Exit Criteria:** `python src/main.py` returns RESULTS in the correct order.
 
-### Phase 1 — LLM Decomposition ← *Current Risk*
+### ✅ Phase 1 — LLM Decomposition ← *Current Risk*
 *   Implementation of `OpenAIPlanner using real prompts.
 *   Handling of malformed JSON, cycles, and dangling `depends_on` references (via retry / Pydantic validation).
 *   **Exit Criteria:** For 10 different requests, the planner consistently outputs a valid `Plan that is semantically useful: standard decomposition matches expert evaluation (no random/redundant tasks, meaningful dependencies). If this fails, the architecture is questionable, and we will not proceed to infrastructure build-out.
@@ -58,3 +58,12 @@
 *   N instances of agents (queue groups), metrics, event traces.
 *   Subject hierarchy with priorities: `tasks.{type}.{priority}` (high → fast models, low → night batches), queue monitoring by type, subscription to specific `task_id` for debugging.
 *   Priority queues are defined by a separate static config; DLQ for items failed after all retries moves here as well.
+
+
+
+
+=================================
+
+ollama pull qwen2.5:3b && ollama serve
+
+затем cd src && python3 eval_planner.py.
