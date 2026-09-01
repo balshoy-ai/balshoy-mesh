@@ -58,12 +58,3 @@
 *   N instances of agents (queue groups), metrics, event traces.
 *   Subject hierarchy with priorities: `tasks.{type}.{priority}` (high → fast models, low → night batches), queue monitoring by type, subscription to specific `task_id` for debugging.
 *   Priority queues are defined by a separate static config; DLQ for items failed after all retries moves here as well.
-
-
-
-
-=================================
-
-ollama pull qwen2.5:3b && ollama serve
-
-затем cd src && python3 eval_planner.py.
