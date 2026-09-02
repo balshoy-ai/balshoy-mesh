@@ -25,7 +25,7 @@
 *   Handling of malformed JSON, cycles, and dangling `depends_on` references (via retry / Pydantic validation).
 *   **Exit Criteria:** For 10 different requests, the planner consistently outputs a valid `Plan that is semantically useful: standard decomposition matches expert evaluation (no random/redundant tasks, meaningful dependencies). If this fails, the architecture is questionable, and we will not proceed to infrastructure build-out.
 
-### Phase 2 — Real Agents (In-Memory)
+### ✅ Phase 2 — Real Agents (In-Memory)
 *   Replacement of mocks with actual model calls (`code_review` / `doc_gen` / `translate`).
 *   Same contract: `(instruction, ctx) -> result`.
 *   Development of the **Finalizer**: assembling a coherent answer from parts (N→1, branching dependencies, merge without loss/duplication) and fixing the stub for the OpenAI response contract (see Phase 6).

@@ -1,43 +1,26 @@
-from typing import List
+from __future__ import annotations
 
-from planner import Plan, Step
-from agents import run
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
+from agents import run as run_agent
+from dag import topological_order
 
-class DAGError(Exception):
-    pass
+if TYPE_CHECKING:
+    from planner import Plan
 
-
-def _topo(plan: Plan) -> List[Step]:
-    ids = {s.id for s in plan.steps}
-    for s in plan.steps:
-        for d in s.depends_on:
-            if d not in ids:
-                raise DAGError(f"step {s.id} depends on unknown {d}")
-
-    indeg = {s.id: len(s.depends_on) for s in plan.steps}
-    by_id = {s.id: s for s in plan.steps}
-    ready = [s.id for s in plan.steps if indeg[s.id] == 0]
-    order: List[str] = []
-    while ready:
-        n = ready.pop(0)
-        order.append(n)
-        for s in plan.steps:
-            if n in s.depends_on:
-                indeg[s.id] -= 1
-                if indeg[s.id] == 0:
-                    ready.append(s.id)
-
-    if len(order) != len(plan.steps):
-        raise DAGError("cycle detected in plan")
-    return [by_id[i] for i in order]
+AgentRun = Callable[[str, str, str], str]
 
 
-def execute(plan: Plan) -> dict:
-    """Validate + topologically execute the plan, threading dependency results."""
-    order = _topo(plan)
-    results: dict = {}
-    for s in order:
-        ctx = " | ".join(results[d] for d in s.depends_on)
-        results[s.id] = run(s.agent, s.instruction, ctx)
+def execute(plan: Plan, agent_run: AgentRun = run_agent) -> dict[str, str]:
+    """Validate + topologically execute the plan, threading dependency results.
+
+    Returns a mapping of step id -> result text. The Finalizer (see finalizer.py)
+    is responsible for merging these parts into the final answer.
+    """
+    order = topological_order(plan)
+    results: dict[str, str] = {}
+    for step in order:
+        context = " | ".join(results[d] for d in step.depends_on)
+        results[step.id] = agent_run(step.agent, step.instruction, context)
     return results
